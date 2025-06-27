@@ -1,0 +1,130 @@
+@model LanchoneteApp.Models.Pedido
+@{
+    ViewData["Title"] = "Novo Pedido";
+    var produtos = ViewData["Produtos"] as List<LanchoneteApp.Models.Produto>;
+}
+
+<h2>📋 Novo Pedido</h2>
+
+<form asp-action="Create" id="pedidoForm">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>👤 Informações do Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label asp-for="ClienteId" class="form-label">Cliente</label>
+                        <select asp-for="ClienteId" class="form-select" asp-items="ViewBag.ClienteId">
+                            <option value="">Selecione um cliente...</option>
+                        </select>
+                        <span asp-validation-for="ClienteId" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label asp-for="Observacoes" class="form-label">Observações</label>
+                        <textarea asp-for="Observacoes" class="form-control" rows="3" placeholder="Observações gerais do pedido..."></textarea>
+                        <span asp-validation-for="Observacoes" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>🍔 Produtos do Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <div id="produtos-container">
+                        @if (produtos != null)
+                        {
+                            var categorias = produtos.GroupBy(p => p.Categoria);
+                            foreach (var categoria in categorias)
+                            {
+                                <h6 class="text-primary mt-3 mb-2">@categoria.Key</h6>
+                                @foreach (var produto in categoria)
+                                {
+                                    <div class="card mb-2">
+                                        <div class="card-body p-2">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-6">
+                                                    <strong>@produto.Nome</strong><br>
+                                                    <small class="text-muted">@produto.Descricao</small><br>
+                                                    <strong class="text-success">R$ @produto.Preco.ToString("F2")</strong>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="hidden" name="produtoIds" value="@produto.Id" />
+                                                    <input type="number" name="quantidades" class="form-control form-control-sm" 
+                                                           placeholder="Qtd" min="0" max="100" value="0" 
+                                                           onchange="calcularTotal()" />
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input type="text" name="observacoesItens" class="form-control form-control-sm" 
+                                                           placeholder="Obs..." />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">Nenhum produto disponível.</p>
+                        }
+                    </div>
+                    
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <h5 class="mb-0">Total: <span id="valorTotal" class="text-success">R$ 0,00</span></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">
+            💾 Salvar Pedido
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            ↩️ Voltar
+        </a>
+    </div>
+</form>
+
+<script>
+function calcularTotal() {
+    let total = 0;
+    const produtoIds = document.getElementsByName('produtoIds');
+    const quantidades = document.getElementsByName('quantidades');
+    const precos = [@(string.Join(",", produtos?.Select(p => p.Preco.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)) ?? new string[0]))];
+    
+    for (let i = 0; i < quantidades.length; i++) {
+        const quantidade = parseInt(quantidades[i].value) || 0;
+        const preco = precos[i] || 0;
+        total += quantidade * preco;
+    }
+    
+    document.getElementById('valorTotal').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+}
+
+// Validação antes do envio
+document.getElementById('pedidoForm').addEventListener('submit', function(e) {
+    const quantidades = document.getElementsByName('quantidades');
+    let temItens = false;
+    
+    for (let i = 0; i < quantidades.length; i++) {
+        if (parseInt(quantidades[i].value) > 0) {
+            temItens = true;
+            break;
+        }
+    }
+    
+    if (!temItens) {
+        e.preventDefault();
+        alert('Adicione pelo menos um produto ao pedido!');
+    }
+});
+</script> 

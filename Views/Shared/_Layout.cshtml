@@ -13,39 +13,15 @@
                 <a class="navbar-brand" href="/">🍔 Lanchonete</a>
                 <div class="navbar-nav">
                     <a class="nav-link" href="/">Cardápio</a>
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <a class="nav-link" href="/Produtos">Gerenciar Produtos</a>
-                        <a class="nav-link" href="/Clientes">Clientes</a>
-                        <a class="nav-link" href="/Pedidos">Pedidos</a>
-                        @if (User.IsInRole("Administrador"))
-                        {
-                            <a class="nav-link" href="/Relatorios/Dashboard">Dashboard</a>
-                        }
-                    }
+                    <a class="nav-link" href="/Produtos">Gerenciar Produtos</a>
+                    <a class="nav-link" href="/Clientes">Clientes</a>
+                    <a class="nav-link" href="/Pedidos">Pedidos</a>
+                    <a class="nav-link" href="/Relatorios/Dashboard">Dashboard</a>
                 </div>
                 <div class="navbar-nav ms-auto">
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        <div class="navbar-nav">
-                            <span class="navbar-text me-3">
-                                👋 Olá, <strong>@User.Identity.Name</strong>
-                                @if (User.IsInRole("Administrador"))
-                                {
-                                    <span class="badge bg-warning text-dark">Admin</span>
-                                }
-                            </span>
-                            <form asp-action="Logout" asp-controller="Auth" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-outline-light btn-sm">Sair</button>
-                            </form>
-                        </div>
-                    }
-                    else
-                    {
-                        <span class="navbar-text">
-                            📞 <strong>(11) 99999-9999</strong>
-                        </span>
-                    }
+                    <span class="navbar-text">
+                        📞 <strong>(11) 99999-9999</strong>
+                    </span>
                 </div>
             </div>
         </nav>

@@ -1,0 +1,116 @@
+@model IEnumerable<LanchoneteApp.Models.Pedido>
+@{
+    ViewData["Title"] = "Pedidos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📋 Gerenciar Pedidos</h2>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="fas fa-plus"></i> Novo Pedido
+    </a>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h5 class="text-warning">⏳ Pendentes</h5>
+                        <h3>@Model.Count(p => p.Status == LanchoneteApp.Models.StatusPedido.Pendente)</h3>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-info">👨‍🍳 Preparando</h5>
+                        <h3>@Model.Count(p => p.Status == LanchoneteApp.Models.StatusPedido.Preparando)</h3>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-success">✅ Prontos</h5>
+                        <h3>@Model.Count(p => p.Status == LanchoneteApp.Models.StatusPedido.Pronto)</h3>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="text-primary">🚚 Entregues</h5>
+                        <h3>@Model.Count(p => p.Status == LanchoneteApp.Models.StatusPedido.Entregue)</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nº</th>
+                        <th>Cliente</th>
+                        <th>Data/Hora</th>
+                        <th>Status</th>
+                        <th>Valor Total</th>
+                        <th>Itens</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pedido in Model)
+                    {
+                        <tr>
+                            <td><strong>#@pedido.Id</strong></td>
+                            <td>@pedido.Cliente.Nome</td>
+                            <td>@pedido.DataPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @switch (pedido.Status)
+                                {
+                                    case LanchoneteApp.Models.StatusPedido.Pendente:
+                                        <span class="badge bg-warning">⏳ Pendente</span>
+                                        break;
+                                    case LanchoneteApp.Models.StatusPedido.Preparando:
+                                        <span class="badge bg-info">👨‍🍳 Preparando</span>
+                                        break;
+                                    case LanchoneteApp.Models.StatusPedido.Pronto:
+                                        <span class="badge bg-success">✅ Pronto</span>
+                                        break;
+                                    case LanchoneteApp.Models.StatusPedido.Entregue:
+                                        <span class="badge bg-primary">🚚 Entregue</span>
+                                        break;
+                                    case LanchoneteApp.Models.StatusPedido.Cancelado:
+                                        <span class="badge bg-danger">❌ Cancelado</span>
+                                        break;
+                                }
+                            </td>
+                            <td><strong>R$ @pedido.ValorTotal.ToString("F2")</strong></td>
+                            <td>@pedido.Itens.Count item(s)</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-primary">
+                                        👁️ Ver
+                                    </a>
+                                    @if (pedido.Status != LanchoneteApp.Models.StatusPedido.Entregue && pedido.Status != LanchoneteApp.Models.StatusPedido.Cancelado)
+                                    {
+                                        <a asp-action="UpdateStatus" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-warning">
+                                            🔄 Status
+                                        </a>
+                                    }
+                                    <a asp-action="Delete" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-danger">
+                                        🗑️ Excluir
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        @if (!Model.Any())
+        {
+            <div class="text-center py-4">
+                <p class="text-muted">Nenhum pedido encontrado.</p>
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Criar Primeiro Pedido
+                </a>
+            </div>
+        }
+    </div>
+</div>
