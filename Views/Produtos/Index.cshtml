@@ -1,0 +1,37 @@
+@model IEnumerable<LanchoneteApp.Models.Produto>
+@{
+    ViewData["Title"] = "Gerenciar Produtos";
+}
+
+<h2>Gerenciar Produtos</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Novo Produto</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Disponível</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nome</td>
+                <td>@item.Categoria</td>
+                <td>R$ @item.Preco.ToString("F2")</td>
+                <td>@(item.Disponivel ? "Sim" : "Não")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

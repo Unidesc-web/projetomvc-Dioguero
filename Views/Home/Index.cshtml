@@ -1,0 +1,43 @@
+﻿@model IEnumerable<LanchoneteApp.Models.Produto>
+@{
+    ViewData["Title"] = "Cardápio";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>🍔 Nosso Cardápio</h2>
+        <p class="text-muted">Confira nossos deliciosos produtos!</p>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h5 class="card-title">📞 Faça seu Pedido!</h5>
+                <p class="card-text mb-1"><strong>(61) 99402-8922</strong></p>
+                <p class="card-text"><small>WhatsApp: (61) 99402-8922</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    @foreach (var grupo in Model.GroupBy(p => p.Categoria))
+    {
+        <div class="col-md-12 mb-4">
+            <h4 class="text-primary">@grupo.Key</h4>
+            <div class="row">
+                @foreach (var produto in grupo)
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@produto.Nome</h5>
+                                <p class="card-text">@produto.Descricao</p>
+                                <p class="card-text"><strong>R$ @produto.Preco.ToString("F2")</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
